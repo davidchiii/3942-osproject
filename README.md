@@ -1,8 +1,8 @@
 # 3942-osproject
 ### Features
 - Programming Language: python
-- Testing Framework: pytest
 - Runtime Environment: venv
+- Testing Framework: pytest
 - Continuous Integration: GitHub Actions
 - Static Analysis: flake8
 - Code Formatting: black
@@ -11,12 +11,11 @@
 ### Getting Started
 1. **Clone the repository**
    ```
-   git clone [git@github.com:davidchiii/3942-osproject.git](https://github.com/davidchiii/3942-osproject.git)https://github.com/davidchiii/3942-osproject.git
+   git clone https://github.com/davidchiii/3942-osproject.git
    cd 3942-osproject
    ```
 3. **Create and activate new virtual environment**
    ```
-   #create virtual environment:
    python -m venv venv
 
    # On macOS and Linux:
