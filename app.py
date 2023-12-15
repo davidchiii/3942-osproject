@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, session, request
 from authlib.integrations.flask_client import OAuth
 
-import googleapiclient.discovery
+from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import os
 
@@ -15,16 +15,21 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 
 
 oauth = OAuth(app)
-
+scope = [
+    "openid",
+    "email",
+    "profile",
+    "https://www.googleapis.com/auth/tasks",
+    "https://www.googleapis.com/auth/documents.readonly",
+    "https://www.googleapis.com/auth/drive",
+]
 
 google = oauth.register(
     name="google",
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
-    client_kwargs={
-        "scope": "openid email profile https://www.googleapis.com/auth/tasks"
-    },
+    client_kwargs={"scope": scope},
 )
 
 
@@ -41,7 +46,7 @@ def home():
             scopes=token["scope"],
         )
         try:
-            google_tasks_service = googleapiclient.discovery.build(
+            google_tasks_service = build(
                 "tasks", "v1", credentials=credentials
             )
             task_lists = google_tasks_service.tasklists().list().execute()
@@ -69,7 +74,6 @@ def home():
         </form>
         """
         )
-        # Add a logout link
         return tasks_display + '<br><a href="/logout">Logout</a>'
     else:
         return (
@@ -117,8 +121,8 @@ def add_task():
     if task_title:
         try:
             task = {"title": task_title}
-            task_list_id = "@default"  # Replace with a valid task list ID
-            google_tasks_service = googleapiclient.discovery.build(
+            task_list_id = "@default"
+            google_tasks_service = build(
                 "tasks", "v1", credentials=credentials
             )
             google_tasks_service.tasks().insert(
@@ -127,6 +131,64 @@ def add_task():
         except Exception as e:
             print(e)
     return redirect("/")
+
+
+@app.route("/fetch_comments")
+def fetch_comments():
+    if "google_token" in session:
+        token = session["google_token"]
+        credentials = Credentials(
+            token=token["access_token"],
+            refresh_token=token.get("refresh_token"),
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            scopes=token["scope"],
+        )
+        document_id, docname = get_document_id(credentials)
+        if document_id is None:
+            return "<h2>Joever</h2><ul>'"
+        try:
+            # Use docs service when interacting w/ docs look at other services
+            # docs_service = build('docs', 'v1', credentials=credentials)
+            # docs_service = build('docs', 'v1', credentials=credentials)
+            # document = docs_service.documents().get(documentId=document_id).execute()
+            drive_service = build("drive", "v3", credentials=credentials)
+
+            comments_result = (
+                drive_service.comments()
+                .list(fileId=document_id, fields="*")
+                .execute()["comments"]
+            )
+
+            return "<br>".join([str(i) for i in comments_result])
+
+        except Exception as e:
+            print(f"Error fetching comments: {e}")
+            return f"An error occurred: {e}"
+
+    return redirect(url_for("login"))
+
+
+def get_document_id(credentials):
+    drive_service = build("drive", "v3", credentials=credentials)
+
+    results = (
+        drive_service.files()
+        .list(
+            q="mimeType='application/vnd.google-apps.document'",
+            orderBy="modifiedTime desc",
+            pageSize=10,
+        )
+        .execute()
+    )
+
+    files = results.get("files", [])
+
+    if not files:
+        return None, None
+
+    return files[0]["id"], files[0]["name"]
 
 
 if __name__ == "__main__":
