@@ -1,3 +1,17 @@
+"""
+This is the file containing all of the endpoints for our flask app.
+The endpoint called `endpoints` will return all available endpoints.
+"""
+
+from http import HTTPStatus
+from bson.objectid import ObjectId
+from flask import Flask, request
+from flask_restx import Resource, Api
+
+# from flask_restx import Resource, Api, fields
+
+import werkzeug.exceptions as wz
+
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, session, request
 from authlib.integrations.flask_client import OAuth
