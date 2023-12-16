@@ -29,7 +29,7 @@ google = oauth.register(
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
-    client_kwargs={"scope": scope},
+    client_kwargs={"scope": " ".join(scope)},
 )
 
 
