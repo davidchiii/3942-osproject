@@ -16,6 +16,7 @@ from authlib.integrations.flask_client import OAuth
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import os
+import db.db as db
 
 load_dotenv()
 
@@ -98,6 +99,7 @@ def login():
     res = google.authorize_redirect(
         url_for("authorize", _external=True), prompt="select_account"
     )
+    db.connect_db()
     return res
 
 
