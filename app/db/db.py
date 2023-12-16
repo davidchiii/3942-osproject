@@ -10,7 +10,7 @@ users_collection = None
 
 
 def connect_db():
-    global client
+    global client, db, users_collection
     if client == "unset":
         if os.environ.get("testing") == "false":
             password = os.environ.get("M_PASS")

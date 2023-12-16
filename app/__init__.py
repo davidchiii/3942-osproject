@@ -99,7 +99,6 @@ def login():
     res = google.authorize_redirect(
         url_for("authorize", _external=True), prompt="select_account"
     )
-    db.connect_db()
     return res
 
 
@@ -116,6 +115,16 @@ def authorize():
     user_info = resp.json()
     session["email"] = user_info["email"]
     session["google_token"] = token
+
+    db.connect_db()
+    existing_user = db.users_collection.find_one({"email": session["email"]})
+    if not existing_user:
+        new_user = {
+            "email": user_info["email"],
+            "name": user_info.get("name", ""),
+            "notifications": [],
+        }
+        db.users_collection.insert_one(new_user)
     return redirect("/")
 
 
