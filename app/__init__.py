@@ -52,16 +52,18 @@ def home():
         db.connect_db()
         try:
             tasks_display = "<h2>Task Lists:</h2><ul>"
-            all_tasks = db.users_collection.find_one(
+            user_data = db.users_collection.find_one(
                 {"_id": ObjectId(session["_user_id"])}
-            )["tasks"]
-            for task_list in all_tasks:
-                tasks_display += f"<li>{task_list}</li>"
-                for task in all_tasks[task_list]:
-                    tasks_display += f"<li>{task}</li>"
-            tasks_display += "</ul>"
-
-            tasks_display += "</ul>"
+            )
+            all_tasks = user_data["tasks"]
+            all_notif = user_data["notifications"]
+            notif_rows = [[all_notif[id] for id in all_notif]]
+            return render_template(
+                "cards.html",
+                title="NewNotes",
+                tasks=all_tasks,
+                notification_rows=notif_rows,
+            )
 
         except Exception as e:
             print(e)
@@ -191,6 +193,7 @@ def fetch_comments():
             scopes=token["scope"],
         )
         document_id, docname = get_document_id(credentials)
+        print(docname)
         if document_id is None:
             return "<h2>Not Working</h2><ul>'"
         try:
@@ -203,7 +206,7 @@ def fetch_comments():
             )
 
             items = [
-                (i["id"], i["content"])
+                (i["id"], i["content"], i["createdTime"])
                 for i in comments_result
                 if f'@{session["email"]}' in i["content"].lower()
             ]
@@ -211,14 +214,25 @@ def fetch_comments():
             old = db.users_collection.find_one(
                 {"_id": ObjectId(session["_user_id"])}
             )["notifications"]
-            for id, content in items:
+            for id, content, created_time in items:
                 if id not in old:
-                    old[id] = content
+                    old[id] = {
+                        "created": created_time[:-5],
+                        "docname": docname,
+                        "content": content,
+                    }
 
             db.users_collection.update_one(
                 {"_id": ObjectId(session["_user_id"])},
                 {"$set": {"notifications": old}},
             )
+
+            # project_rows = [[old[id] for id in old]]
+            # print ("rendering", project_rows)
+            # return render_template('cards.html',
+            #     title = 'NewNotes',
+            #     project_rows = project_rows,
+            #     )
             return redirect("/")
 
         except Exception as e:
