@@ -12,6 +12,7 @@ The endpoint called `endpoints` will return all available endpoints.
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, session, request
 from authlib.integrations.flask_client import OAuth
+from bson.objectid import ObjectId
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -48,30 +49,18 @@ google = oauth.register(
 @app.route("/")
 def home():
     if "google_token" in session:
-        token = session["google_token"]
-        credentials = Credentials(
-            token=token["access_token"],
-            refresh_token=token.get("refresh_token"),
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-            scopes=token["scope"],
-        )
+        db.connect_db()
         try:
-            google_tasks_service = build(
-                "tasks", "v1", credentials=credentials
-            )
-            task_lists = google_tasks_service.tasklists().list().execute()
             tasks_display = "<h2>Task Lists:</h2><ul>"
-            for task_list in task_lists.get("items", []):
-                tasks_display += f"<li>{task_list['title']}</li>"
-                tasks = (
-                    google_tasks_service.tasks()
-                    .list(tasklist=task_list["id"])
-                    .execute()
-                )
-                for task in tasks.get("items", []):
-                    tasks_display += f"<li>{task['title']}</li>"
+            all_tasks = db.users_collection.find_one(
+                {"_id": ObjectId(session["_user_id"])}
+            )["tasks"]
+            for task_list in all_tasks:
+                tasks_display += f"<li>{task_list}</li>"
+                for task in all_tasks[task_list]:
+                    tasks_display += f"<li>{task}</li>"
+            tasks_display += "</ul>"
+
             tasks_display += "</ul>"
 
         except Exception as e:
@@ -94,6 +83,37 @@ def home():
         )
 
 
+@app.route("/fetch_tasks")
+def fetch_tasks():
+    db.connect_db()
+    token = session["google_token"]
+    credentials = Credentials(
+        token=token["access_token"],
+        refresh_token=token.get("refresh_token"),
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        scopes=token["scope"],
+    )
+    google_tasks_service = build("tasks", "v1", credentials=credentials)
+    task_lists = google_tasks_service.tasklists().list().execute()
+    all_tasks = {}
+    for task_list in task_lists.get("items", []):
+        tasks = (
+            google_tasks_service.tasks()
+            .list(tasklist=task_list["id"])
+            .execute()
+        )
+        items = []
+        for task in tasks.get("items", []):
+            items.append(f"{task['title']}")
+        all_tasks[task_list["title"]] = items
+    db.users_collection.update_one(
+        {"_id": ObjectId(session["_user_id"])}, {"$set": {"tasks": all_tasks}}
+    )
+    return redirect("/")
+
+
 @app.route("/login")
 def login():
     res = google.authorize_redirect(
@@ -113,7 +133,7 @@ def authorize():
     token = google.authorize_access_token()
     resp = google.get("https://www.googleapis.com/oauth2/v3/userinfo")
     user_info = resp.json()
-    session["email"] = user_info["email"]
+    session["email"] = user_info["email"].lower()
     session["google_token"] = token
 
     db.connect_db()
@@ -122,9 +142,14 @@ def authorize():
         new_user = {
             "email": user_info["email"],
             "name": user_info.get("name", ""),
-            "notifications": [],
+            "notifications": {},
+            "tasks": {},
         }
         db.users_collection.insert_one(new_user)
+    session["_user_id"] = str(
+        db.users_collection.find_one({"email": session["email"]})["_id"]
+    )
+
     return redirect("/")
 
 
@@ -158,6 +183,7 @@ def add_task():
 @app.route("/fetch_comments")
 def fetch_comments():
     if "google_token" in session:
+        db.connect_db()
         token = session["google_token"]
         credentials = Credentials(
             token=token["access_token"],
@@ -169,12 +195,8 @@ def fetch_comments():
         )
         document_id, docname = get_document_id(credentials)
         if document_id is None:
-            return "<h2>Joever</h2><ul>'"
+            return "<h2>Not Working</h2><ul>'"
         try:
-            # Use docs service when interacting w/ docs look at other services
-            # docs_service = build('docs', 'v1', credentials=credentials)
-            # docs_service = build('docs', 'v1', credentials=credentials)
-            # document = docs_service.documents().get(documentId=document_id).execute()
             drive_service = build("drive", "v3", credentials=credentials)
 
             comments_result = (
@@ -183,13 +205,30 @@ def fetch_comments():
                 .execute()["comments"]
             )
 
-            return "<br>".join([str(i) for i in comments_result])
+            items = [
+                (i["id"], i["content"])
+                for i in comments_result
+                if f'@{session["email"]}' in i["content"].lower()
+            ]
+
+            old = db.users_collection.find_one(
+                {"_id": ObjectId(session["_user_id"])}
+            )["notifications"]
+            for id, content in items:
+                if id not in old:
+                    old[id] = content
+
+            db.users_collection.update_one(
+                {"_id": ObjectId(session["_user_id"])},
+                {"$set": {"notifications": old}},
+            )
+            return redirect("/")
 
         except Exception as e:
             print(f"Error fetching comments: {e}")
             return f"An error occurred: {e}"
 
-    return redirect(url_for("login"))
+    return redirect("/")
 
 
 def get_document_id(credentials):
