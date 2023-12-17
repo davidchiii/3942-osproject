@@ -10,7 +10,7 @@ The endpoint called `endpoints` will return all available endpoints.
 # import werkzeug.exceptions as wz
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, session, request
+from flask import Flask, redirect, url_for, session, request, render_template
 from authlib.integrations.flask_client import OAuth
 
 from googleapiclient.discovery import build
@@ -88,10 +88,7 @@ def home():
         )
         return tasks_display + '<br><a href="/logout">Logout</a>'
     else:
-        return (
-            '<a href="/login">Login with Google</a>'
-            + '<br><a href="/logout">Logout</a>'
-        )
+        return render_template("login.html")
 
 
 @app.route("/login")
