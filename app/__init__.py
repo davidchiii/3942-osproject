@@ -119,7 +119,6 @@ def login():
     res = google.authorize_redirect(
         url_for("authorize", _external=True), prompt="select_account"
     )
-    db.connect_db()
     return res
 
 
@@ -150,6 +149,7 @@ def authorize():
     session["_user_id"] = str(
         db.users_collection.find_one({"email": session["email"]})["_id"]
     )
+
     return redirect("/")
 
 
