@@ -57,15 +57,13 @@ def home():
             )
             all_tasks = user_data["tasks"]
             all_notif = user_data["notifications"]
-            for task_list in all_tasks:
-                tasks_display += f"<h3>{task_list}</h3>"
-                for task in all_tasks[task_list]:
-                    tasks_display += f"<li>{task}</li>"
-            tasks_display += "</ul>"
-            tasks_display += "<h2>Notifications:</h2><ul>"
-            for notification in all_notif:
-                tasks_display += f"<li>{all_notif[notification]}</li>"
-            tasks_display += "</ul>"
+            notif_rows = [[all_notif[id] for id in all_notif]]
+            return render_template(
+                "cards.html",
+                title="NewNotes",
+                tasks=all_tasks,
+                notification_rows=notif_rows,
+            )
 
         except Exception as e:
             print(e)
@@ -218,12 +216,23 @@ def fetch_comments():
             )["notifications"]
             for id, content, created_time in items:
                 if id not in old:
-                    old[id] = [created_time[:-5], docname, content]
+                    old[id] = {
+                        "created": created_time[:-5],
+                        "docname": docname,
+                        "content": content,
+                    }
 
             db.users_collection.update_one(
                 {"_id": ObjectId(session["_user_id"])},
                 {"$set": {"notifications": old}},
             )
+
+            # project_rows = [[old[id] for id in old]]
+            # print ("rendering", project_rows)
+            # return render_template('cards.html',
+            #     title = 'NewNotes',
+            #     project_rows = project_rows,
+            #     )
             return redirect("/")
 
         except Exception as e:

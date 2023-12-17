@@ -1,0 +1,293 @@
+p, h1, h2, h3, h4, h5, h6, button {
+    font-family: "Roboto", serif;
+}
+
+
+body {
+    background-color: #292c2f !important;
+    background-size: cover;
+    width: auto; 
+    overflow-x: hidden;
+    font-family: "Roboto", serif;
+    margin: 0px;
+}
+h2 {
+    font-size: 200px;
+    font-weight: 700;
+    color: black;
+    text-align: center;
+}
+
+img {
+    width: 200px;
+}
+
+
+#navbar{
+  background: #343a40;
+}
+
+#navbar a{
+color: #ff8c00;
+}
+
+#navbar li{
+margin-right: 5px;
+}
+
+#logo {
+width: 200px;
+}
+
+
+.nav-bar {
+    width: 100%;
+    display: inline-block;
+    background-color: #1C539F;
+    font-family: "Roboto", serif;
+    font-weight: 700 !important;
+    padding-top: 10px;
+}
+
+.nav-content .logo-touch-target {
+    display: inline-flex;
+    height: 60%;
+    width: 350px;
+}
+
+.nav-content .nav-logo {
+    height: 60px;
+
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-logo img {
+    width: 200px;
+}
+
+.nav-content nav {
+    display: block;
+    width: 100%;
+    text-align: right;
+    padding-top: 0px;
+    padding-right: 0px;
+}
+
+.nav-content  .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.card .container h2 {
+    font-size: 35px;
+    font-weight: 20px;
+}
+
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.5s;
+    width: 400px;
+    height: 80px;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Shadow */
+  .card:hover {
+    box-shadow: 0 20px 20px 0 rgba(0,0,0,0.2);
+  }
+  
+  /* Padding inside Card */
+  .container {
+    padding: 2px 16px;
+    padding-top: 20px;
+  }
+
+
+  p {
+      font-size: 18px;
+      text-align: center;
+      vertical-align:top;
+  }
+
+  #img_1 {
+      width: 300px;
+      height: 150px;
+  }
+
+
+  /* Icons */
+  .fa {
+    padding: 20px;
+    font-size: 30px;
+    width: 50px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+
+  @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+
+  * {
+    font-family: Roboto;
+  }
+  
+  section {
+    width: 100%;
+    display: inline-block;
+    background: #ccc;
+    height: 60vh;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-top: 20px;
+  }
+  
+  .footer-distributed {
+    background-color: #292c2f;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    font: normal 16px sans-serif;
+    padding: 45px 50px;
+    position:static;
+    min-height: 100%;
+  }
+  
+  .footer-distributed .footer-left p {
+    color: #8f9296;
+    font-size: 14px;
+    margin: 0;
+  }
+  /* Footer links */
+  
+  .footer-distributed p.footer-links {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 0 10px;
+    padding: 0;
+    transition: ease .25s;
+  }
+  
+  .footer-distributed p.footer-links a {
+    display: inline-block;
+    line-height: 1.8;
+    text-decoration: none;
+    color: inherit;
+    transition: ease .25s;
+  }
+  
+  .footer-distributed .footer-links a:before {
+    content: "·";
+    font-size: 20px;
+    left: 0;
+    color: #fff;
+    display: inline-block;
+    padding-right: 5px;
+  }
+  
+  .footer-distributed .footer-links .link-1:before {
+    content: none;
+  }
+  
+  .footer-distributed .footer-right {
+    float: right;
+    margin-top: 6px;
+    max-width: 180px;
+  }
+  
+  .footer-distributed .footer-right a {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    background-color: #33383b;
+    border-radius: 2px;
+    font-size: 20px;
+    color: #ffffff;
+    text-align: center;
+    line-height: 35px;
+    margin-left: 3px;
+    transition:all .25s;
+  }
+
+  .footer-distributed .footer-left #copyright {
+      margin-top: 20px;
+  }
+  
+  .footer-distributed .footer-right a:hover{transform:scale(1.1); -webkit-transform:scale(1.1);}
+  
+  .footer-distributed p.footer-links a:hover{text-decoration:underline;}
+  
+  /* Media Queries */
+  
+  @media (max-width: 600px) {
+    .footer-distributed .footer-left, .footer-distributed .footer-right {
+      text-align: center;
+    }
+    .footer-distributed .footer-right {
+      float: none;
+      margin: 0 auto 20px;
+    }
+    .footer-distributed .footer-left p.footer-links {
+      line-height: 1.8;
+    }
+  }
+
+  /* Profile Cards */
+  .project-card {
+    background-color: white !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 30%;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+    margin-top: 20px;
+  }
+
+  .project-card img {
+    justify-content: center;
+    max-height: 10% !important;
+    width: 100%;
+  }
+  
+  .title {
+    color: grey;
+    font-size: 18px;
+  }
+  
+  flip_button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+    margin-top: 30px;
+  }
+  
+  flip_button:hover, a:hover {
+    opacity: 0.5;
+  }
+
+  .card #map-title {
+    width: "150px";
+  }
