@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Task Collector - Login</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .half {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left {
+            background-color: #4285f4;
+        }
+
+        .right {
+            background-color: #ffffff;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2em;
+            margin: 0 auto;
+        }
+
+        .google-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .google-logo {
+            width: 35px;
+            height: 35px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="half left">
+        <h1>Google Task Collector</h1>
+    </div>
+    <div class="half right">
+        <a href="/login">
+        <button class="google-button">
+            <img class="google-logo" src="/static/google-logo.png" alt="Google Logo">
+            <span>Sign in with Google</span>
+        </button>
+    </div>
+</body>
+</html>
