@@ -1,14 +1,11 @@
-# 3942-osproject
-### Features
-- Programming Language: python
-- Runtime Environment: venv
-- Testing Framework: pytest
-- Continuous Integration: GitHub Actions
-- Static Analysis: flake8
-- Code Formatting: black
-- Package Manager: pip
+# Google Task Collector App
+### About
+This is an application to collect tasks from Google. Tasks can be created on the Gmail page and on a Google Doc.
 
-### Getting Started
+### Features
+- 
+
+### Installation
 1. **Clone the repository**
    ```
    git clone https://github.com/davidchiii/3942-osproject.git
@@ -28,19 +25,10 @@
    ```
    pip install -r requirements.txt
    ```
-5. **Run helloworld.py**
+5. **Run the app**
    ```
-   python helloworld.py
-   ```
-6. **Run tests**
-   ```
-   pytest
-   ```
-7. **Static analysis and formatting**
-   ```
-   black .
-   flake8 .
+   python app/__init__.py
    ```
 
 ### Continuous Integration
-This template uses GitHub Actions for CI. Whenever you push a commit or create a pull request, the CI pipeline will automatically run tests and static analysis checks.
+This template uses GitHub Actions for CI. Whenever you push a commit or create a pull request, the CI pipeline will automatically run tests and static analysis checks. Please ensure that your commited code follows our formatting guidelines.
