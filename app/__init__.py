@@ -206,7 +206,7 @@ def fetch_comments():
             )
 
             items = [
-                (i['id'], i["content"])
+                (i["id"], i["content"])
                 for i in comments_result
                 if f'@{session["email"]}' in i["content"].lower()
             ]
@@ -219,7 +219,8 @@ def fetch_comments():
                     old[id] = content
 
             db.users_collection.update_one(
-                {"_id": ObjectId(session["_user_id"])}, {"$set": {"notifications": old}}
+                {"_id": ObjectId(session["_user_id"])},
+                {"$set": {"notifications": old}},
             )
             return redirect("/")
 
