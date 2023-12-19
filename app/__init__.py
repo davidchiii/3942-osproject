@@ -68,15 +68,6 @@ def home():
         except Exception as e:
             print(e)
             tasks_display = "<p>Error fetching tasks.</p>"
-        tasks_display = (
-            tasks_display
-            + """
-        <form method="post" action="/add_task">
-            <input type="text" name="task_title" placeholder="Enter task title">
-            <input type="submit" value="Add Task">
-        </form>
-        """
-        )
         return tasks_display + '<br><a href="/logout">Logout</a>'
     else:
         return render_template("login.html")
@@ -227,12 +218,6 @@ def fetch_comments():
                 {"$set": {"notifications": old}},
             )
 
-            # project_rows = [[old[id] for id in old]]
-            # print ("rendering", project_rows)
-            # return render_template('cards.html',
-            #     title = 'NewNotes',
-            #     project_rows = project_rows,
-            #     )
             return redirect("/")
 
         except Exception as e:
