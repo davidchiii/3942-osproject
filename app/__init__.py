@@ -56,6 +56,7 @@ def home():
                 {"_id": ObjectId(session["_user_id"])}
             )
             all_tasks = user_data["tasks"]
+            print(all_tasks)
             all_notif = user_data["notifications"]
             notif_rows = [[all_notif[id] for id in all_notif]]
             return render_template(
@@ -76,16 +77,7 @@ def home():
 @app.route("/fetch_tasks")
 def fetch_tasks():
     db.connect_db()
-    token = session["google_token"]
-    credentials = Credentials(
-        token=token["access_token"],
-        refresh_token=token.get("refresh_token"),
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        scopes=token["scope"],
-    )
-    google_tasks_service = build("tasks", "v1", credentials=credentials)
+    google_tasks_service = build("tasks", "v1", credentials=get_credentials())
     task_lists = google_tasks_service.tasklists().list().execute()
     all_tasks = {}
     for task_list in task_lists.get("items", []):
@@ -96,8 +88,8 @@ def fetch_tasks():
         )
         items = []
         for task in tasks.get("items", []):
-            items.append(f"{task['title']}")
-        all_tasks[task_list["title"]] = items
+            items.append(f"Task: {task['title']}\tID:{task['id']}")
+        all_tasks[task_list["title"]] = {"items": items, "id": task_list["id"]}
     db.users_collection.update_one(
         {"_id": ObjectId(session["_user_id"])}, {"$set": {"tasks": all_tasks}}
     )
@@ -145,22 +137,13 @@ def authorize():
 
 @app.route("/add_task", methods=["POST"])
 def add_task():
-    token = session["google_token"]
-    credentials = Credentials(
-        token=token["access_token"],
-        refresh_token=token.get("refresh_token"),
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        scopes=token["scope"],
-    )
     task_title = request.form.get("task_title")
     if task_title:
         try:
             task = {"title": task_title}
             task_list_id = "@default"
             google_tasks_service = build(
-                "tasks", "v1", credentials=credentials
+                "tasks", "v1", credentials=get_credentials()
             )
             google_tasks_service.tasks().insert(
                 tasklist=task_list_id, body=task
@@ -174,15 +157,7 @@ def add_task():
 def fetch_comments():
     if "google_token" in session:
         db.connect_db()
-        token = session["google_token"]
-        credentials = Credentials(
-            token=token["access_token"],
-            refresh_token=token.get("refresh_token"),
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-            scopes=token["scope"],
-        )
+        credentials = get_credentials()
         document_id, docname = get_document_id(credentials)
         print(docname)
         if document_id is None:
@@ -246,6 +221,42 @@ def get_document_id(credentials):
         return None, None
 
     return files[0]["id"], files[0]["name"]
+
+
+@app.route("/delete_task", methods=["POST"])
+def delete_task():
+    if "google_token" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        # Extract task list ID and task ID from the request
+        task_list_id = request.form.get("task_list_id")
+        task_id = request.form.get("task_id")
+
+        if not task_list_id or not task_id:
+            return "Task list ID and task ID are required", 400
+
+        tasks_service = build("tasks", "v1", credentials=get_credentials())
+
+        tasks_service.tasks().delete(
+            tasklist=task_list_id, task=task_id
+        ).execute()
+        return redirect("/fetch_tasks")
+    except Exception as e:
+        print(f"Error deleting task: {e}")
+        return f"An error occurred: {e}"
+
+
+def get_credentials():
+    token = session["google_token"]
+    return Credentials(
+        token=token["access_token"],
+        refresh_token=token.get("refresh_token"),
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        scopes=token["scope"],
+    )
 
 
 if __name__ == "__main__":
