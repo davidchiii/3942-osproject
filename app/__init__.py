@@ -138,10 +138,11 @@ def authorize():
 @app.route("/add_task", methods=["POST"])
 def add_task():
     task_title = request.form.get("task_title")
+    task_list_id = request.form.get("task_list_id")
     if task_title:
         try:
             task = {"title": task_title}
-            task_list_id = "@default"
+            task_list_id = task_list_id
             google_tasks_service = build(
                 "tasks", "v1", credentials=get_credentials()
             )
