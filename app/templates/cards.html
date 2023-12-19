@@ -71,16 +71,27 @@
             {% for task_list in tasks %}
             <div class="card">
                 <div class="container">
-                    <h2>Task List: {{ task_list }}</h2>
-                    {% for task in tasks[task_list] %}
+                    <h2>Task List: {{ task_list }}  ID: {{tasks[task_list]["id"]}}</h2>
+                    {% for task in tasks[task_list]["items"] %}
                     <div class="project-card">
-                        <h3>Task Name: {{ task }}</h3>
+                        <h3>{{ task }}</h3>
                     </div>
                     {% endfor %}
                 </div>
             </div>
             {% endfor %}
         </div>
+
+        <form method="post" action="/add_task">
+            <input type="text" name="task_title" placeholder="Enter task title">
+            <input type="submit" value="Add Task">
+        </form>
+    
+        <form method="post" action="/delete_task">
+            <input type="text" name="task_list_id" placeholder="Task List ID">
+            <input type="text" name="task_id" placeholder="Task ID">
+            <input type="submit" value="Delete Task">
+        </form>
 
         <div class="col-md-6">
             <div class="card">
@@ -115,10 +126,6 @@
             </div>
         </div>
     </div>
-    <form method="post" action="/add_task">
-        <input type="text" name="task_title" placeholder="Enter task title">
-        <input type="submit" value="Add Task">
-    </form>
 
 </div>
 
