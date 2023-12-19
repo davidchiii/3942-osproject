@@ -33,21 +33,32 @@
         }
 
         .custom-btn-color {
-        background-color: #1cef43; /* Custom background color */
-        border-color: #1cef43; /* Custom border color (if needed) */
-        color: rgb(0, 0, 0); /* Text color */
+        background-color: #1cef43;
+        border-color: #1cef43; 
+        color: rgb(0, 0, 0); 
         }
         .custom-btn-color:hover {
-            background-color: #19b020; /* Darker shade for hover state */
+            background-color: #19b020; 
             border-color: #19b020;
         }
+
+        .custom-btn-delete {
+        background-color: #f42f2f;
+        border-color: #f42f2f; 
+        color: rgb(0, 0, 0); 
+        }
+        .custom-btn-delete:hover {
+            background-color: #c92525; 
+            border-color: #c92525;
+        }
+
         .custom-btn-logout {
-        background-color: #bababa; /* Custom background color */
-        border-color: #bababa; /* Custom border color (if needed) */
-        color: rgb(0, 0, 0); /* Text color */
+        background-color: #bababa; 
+        border-color: #bababa; 
+        color: rgb(0, 0, 0); 
         }
         .custom-btn-logout:hover {
-            background-color: #949494; /* Darker shade for hover state */
+            background-color: #949494; 
             border-color: #949494;
         }
     </style>
@@ -80,18 +91,21 @@
                 </div>
             </div>
             {% endfor %}
-        </div>
-
-        <form method="post" action="/add_task">
-            <input type="text" name="task_title" placeholder="Enter task title">
-            <input type="submit" value="Add Task">
-        </form>
-    
-        <form method="post" action="/delete_task">
-            <input type="text" name="task_list_id" placeholder="Task List ID">
-            <input type="text" name="task_id" placeholder="Task ID">
-            <input type="submit" value="Delete Task">
-        </form>
+            <div class="card">
+              <div class="container">
+                <form method="post" action="/add_task">
+                  <input type="text" name="task_list_id" placeholder="Task List ID">
+                  <input type="text" name="task_title" placeholder="Enter task title">
+                  <input type="submit" value="Add Task" class="btn custom-btn-color">
+                </form>
+                <form method="post" action="/delete_task">
+                  <input type="text" name="task_list_id" placeholder="Task List ID">
+                  <input type="text" name="task_id" placeholder="Task ID">
+                  <input type="submit" value="Delete Task" class="btn custom-btn-delete">
+                </form>
+              </div>
+            </div>
+      </div>
 
         <div class="col-md-6">
             <div class="card">
