@@ -218,12 +218,6 @@ def fetch_comments():
                 {"$set": {"notifications": old}},
             )
 
-            # project_rows = [[old[id] for id in old]]
-            # print ("rendering", project_rows)
-            # return render_template('cards.html',
-            #     title = 'NewNotes',
-            #     project_rows = project_rows,
-            #      )
             return redirect("/")
 
         except Exception as e:
