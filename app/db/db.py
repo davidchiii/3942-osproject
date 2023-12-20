@@ -1,15 +1,13 @@
 import os
 import pymongo as pm
 
-# from bson.objectid import ObjectId
-
 client = "unset"
 db_name = os.environ.get("DB_NAME")
 db = None
 users_collection = None
 
 
-def connect_db():
+def connect_db(testing=False):
     global client, db, users_collection
     if client == "unset":
         if os.environ.get("testing") == "false":
@@ -31,8 +29,7 @@ def connect_db():
             print("Connecting to Mongo locally.")
             password = "example"
             username = "root"
-            client = pm.MongoClient(
-                f"mongodb://{username}:{password}@localhost:27017/"
-            )
-            db = client[db_name]
-            users_collection = db.users
+            client = pm.MongoClient()
+            if not testing:
+                db = client[db_name]
+                users_collection = db.users
