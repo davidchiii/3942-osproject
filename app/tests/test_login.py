@@ -26,7 +26,10 @@ class TestAuthWithGoogleAuth(unittest.TestCase):
 
     def test_default_credentials(self):
         with mock.patch("google.auth.default", autospec=True) as default:
-            default.return_value = (mock.sentinel.credentials, mock.sentinel.project)
+            default.return_value = (
+                mock.sentinel.credentials,
+                mock.sentinel.project,
+            )
 
             credentials = _auth.default_credentials()
 
@@ -36,7 +39,10 @@ class TestAuthWithGoogleAuth(unittest.TestCase):
         with mock.patch(
             "google.auth.load_credentials_from_file", autospec=True
         ) as default:
-            default.return_value = (mock.sentinel.credentials, mock.sentinel.project)
+            default.return_value = (
+                mock.sentinel.credentials,
+                mock.sentinel.project,
+            )
 
             credentials = _auth.credentials_from_file("credentials.json")
 
@@ -47,18 +53,30 @@ class TestAuthWithGoogleAuth(unittest.TestCase):
 
     def test_default_credentials_with_scopes(self):
         with mock.patch("google.auth.default", autospec=True) as default:
-            default.return_value = (mock.sentinel.credentials, mock.sentinel.project)
+            default.return_value = (
+                mock.sentinel.credentials,
+                mock.sentinel.project,
+            )
             credentials = _auth.default_credentials(scopes=["1", "2"])
 
-            default.assert_called_once_with(scopes=["1", "2"], quota_project_id=None)
+            default.assert_called_once_with(
+                scopes=["1", "2"], quota_project_id=None
+            )
             self.assertEqual(credentials, mock.sentinel.credentials)
 
     def test_default_credentials_with_quota_project(self):
         with mock.patch("google.auth.default", autospec=True) as default:
-            default.return_value = (mock.sentinel.credentials, mock.sentinel.project)
-            credentials = _auth.default_credentials(quota_project_id="my-project")
+            default.return_value = (
+                mock.sentinel.credentials,
+                mock.sentinel.project,
+            )
+            credentials = _auth.default_credentials(
+                quota_project_id="my-project"
+            )
 
-            default.assert_called_once_with(scopes=None, quota_project_id="my-project")
+            default.assert_called_once_with(
+                scopes=None, quota_project_id="my-project"
+            )
             self.assertEqual(credentials, mock.sentinel.credentials)
 
     def test_with_scopes_non_scoped(self):
@@ -90,7 +108,9 @@ class TestAuthWithGoogleAuth(unittest.TestCase):
 
         authorized_http = _auth.authorized_http(credentials)
 
-        self.assertIsInstance(authorized_http, google_auth_httplib2.AuthorizedHttp)
+        self.assertIsInstance(
+            authorized_http, google_auth_httplib2.AuthorizedHttp
+        )
         self.assertEqual(authorized_http.credentials, credentials)
         self.assertIsInstance(authorized_http.http, httplib2.Http)
         self.assertIsInstance(authorized_http.http.timeout, int)
