@@ -22,7 +22,16 @@ This is an application to collect all of a user's tasks from Google and display 
    git clone https://github.com/davidchiii/3942-osproject.git
    cd 3942-osproject
    ```
-3. **Create and activate new virtual environment**
+2. **Create .env
+   It should have at least the following components:**
+   ```
+   APP_KEY=
+   CLIENT_ID=
+   CLIENT_SECRET=
+   testing=This must be true or false
+   DB_NAME=
+   ```
+4. **Create and activate new virtual environment**
    ```
    python -m venv venv
 
@@ -32,17 +41,21 @@ This is an application to collect all of a user's tasks from Google and display 
    # On Windows:
    venv\Scripts\activate
    ```
-4. **Install dependencies using pip**
+5. **Install dependencies using pip**
    ```
    pip install -r requirements.txt
    ```
-5. **Run the MongoDB database**
+6. **Run the MongoDB database**
    ```
    docker compose up
    ```
-5. **Run the app**
+7. **Export PythonPath**
    ```
-   python app/__init__.py
+   export PYTHONPATH=$(pwd)/app
+   ```
+7. **Run the app**
+   ```
+   flask run
    ```
 
 ### Usage
