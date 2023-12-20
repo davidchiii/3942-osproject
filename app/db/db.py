@@ -2,13 +2,13 @@ import os
 import pymongo as pm
 
 client = "unset"
-db_name = os.environ.get("DB_NAME")
+db_name = "default"
 db = None
 users_collection = None
 
 
 def connect_db(testing=False):
-    global client, db, users_collection
+    global client, db, users_collection, db_name
     if client == "unset":
         if os.environ.get("testing") == "false":
             password = os.environ.get("M_PASS")
@@ -20,6 +20,7 @@ def connect_db(testing=False):
             url = url + "/?retryWrites=true&w=majority"
             client = pm.MongoClient(url.format(password, username))
             db = client[db_name]
+
             users_collection = db.users
             try:
                 print(users_collection)
@@ -30,6 +31,6 @@ def connect_db(testing=False):
             password = "example"
             username = "root"
             client = pm.MongoClient()
-            if not testing:
-                db = client[db_name]
-                users_collection = db.users
+            # if not testing:
+            db = client[db_name]
+            users_collection = db.users
