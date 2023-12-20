@@ -15,6 +15,7 @@ This is an application to collect all of a user's tasks from Google and display 
 ### Requirements
 - Please install the 'requirements.txt' file (see Installation instructions below)
 - Create a .env file containing APP_KEY, CIENT_ID, CLIENT_SECRET, testing (set it to true), DB_NAME (set it to anything you want)
+- The project is provided with a `docker-compose.yml` file to build and run. Please install docker to skip the `requirements.txt` installation step
 
 ### Installation
 1. **Clone the repository**
@@ -33,13 +34,13 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
 4. **Create and activate new virtual environment**
    ```
-   python -m venv venv
+   python -m .venv venv
 
    # On macOS and Linux:
-   source venv/bin/activate
+   source .venv/bin/activate
 
    # On Windows:
-   venv\Scripts\activate
+   .venv\Scripts\activate
    ```
 5. **Install dependencies using pip**
    ```
@@ -81,7 +82,7 @@ This template uses GitHub Actions for CI. Whenever you push a commit or create a
 - Clearly describe your enhancement, including the motivation for the change and any examples from other projects or contexts.
 
 **Pull Requests**
-- Fork the repository and create your branch from main.
+- Fork the repository by creating your branch from main.
 - Ensure your code adheres to the coding standards (use linting tools and adhere to the coding style of the project).
 - Write meaningful commit messages.
 - Before creating a pull request, please run ```black .``` and ```flake8 .``` to ensure that your code matches our formatting guidelines.
