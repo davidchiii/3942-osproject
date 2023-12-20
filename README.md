@@ -14,8 +14,7 @@ This is an application to collect all of a user's tasks from Google and display 
 
 ### Requirements
 - Please install the 'requirements.txt' file (see Installation instructions below)
-- Create a .env file containing APP_KEY, CIENT_ID, CLIENT_SECRET, testing, DB_NAME (see Installation instructions below)
-
+- Create a .env file containing APP_KEY, CIENT_ID, CLIENT_SECRET, testing (set it to true), DB_NAME (set it to anything you want)
 
 ### Installation
 1. **Clone the repository**
@@ -37,13 +36,17 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
    pip install -r requirements.txt
    ```
+5. **Run the MongoDB database**
+   ```
+   docker compose up
+   ```
 5. **Run the app**
    ```
    python app/__init__.py
    ```
 
 ### Usage
-1. After running the app, open the Flask site on your web browswer. Press on the log in and log in using a valid Google account
+1. After running the app, open the Flask site on your web browswer. Press the login button and log in using a valid Google account
 2. If prompted with the warning 'Google hasn’t verified this app,' click on advanced and then click on 'Go to TaskCollector (unsafe).'
 3. If prompted with 'TaskCollector wants additional access to your Google Account' check the 'select all' box and then continue
 4. Once at the homepage of the website you can click 'fetch tasks' to aggregate and display all of the current tasks you have.
