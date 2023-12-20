@@ -2,6 +2,10 @@ name: Python CI
 
 on: [push, pull_request]
 
+env:
+  testing: true
+  PYTHONPATH: /home/runner/work/3942-osproject/3942-osproject/app
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +26,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Set up Docker Compose
+      run: |
+        docker-compose -f docker-compose.yml up -d
 
     - name: Run Pytest
       run: |
