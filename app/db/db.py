@@ -31,6 +31,8 @@ def connect_db():
             print("Connecting to Mongo locally.")
             password = "example"
             username = "root"
-            client = pm.MongoClient(f"mongodb://{username}:{password}@localhost:27017/")
+            client = pm.MongoClient(
+                f"mongodb://{username}:{password}@localhost:27017/"
+            )
             db = client[db_name]
             users_collection = db.users
