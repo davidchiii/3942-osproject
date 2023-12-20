@@ -48,7 +48,7 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
 6. **Run the MongoDB database**
    ```
-   docker compose up
+   docker compose up -d 
    ```
 7. **Export PythonPath**
    ```
