@@ -17,7 +17,7 @@ This is an application to collect all of a user's tasks from Google and display 
 - Create a .env file containing APP_KEY, CIENT_ID, CLIENT_SECRET, testing (set it to true), DB_NAME (set it to anything you want)
 - The project is provided with a `docker-compose.yml` file to build and run. Please install docker to skip the `requirements.txt` installation step. If docker-compose does not work, use `mongod` in a different shell.
 
-### Installation
+### Installation and Installation Guide Video
 1. **Clone the repository**
    ```
    git clone https://github.com/davidchiii/3942-osproject.git
@@ -62,6 +62,10 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
    flask run
    ```
+
+
+https://github.com/davidchiii/3942-osproject/assets/63520213/7a5688e9-1362-44bf-927f-c608b2a71ac7
+
 
 ### Usage
 1. After running the app, open the Flask site on your web browswer. Press the login button and log in using a valid Google account
