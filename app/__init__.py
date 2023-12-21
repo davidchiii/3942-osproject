@@ -159,46 +159,48 @@ def fetch_comments():
     if "google_token" in session:
         db.connect_db()
         credentials = get_credentials()
-        document_id, docname = get_document_id(credentials)
-        print(docname)
-        if document_id is None:
-            return "<h2>Not Working</h2><ul>'"
-        try:
-            drive_service = build("drive", "v3", credentials=credentials)
+        doclist = get_document_id(credentials)
+        for item in doclist:
+            document_id, docname = item
+            print(docname)
+            if document_id is None:
+                return "<h2>Not Working</h2><ul>'"
+            try:
+                drive_service = build("drive", "v3", credentials=credentials)
 
-            comments_result = (
-                drive_service.comments()
-                .list(fileId=document_id, fields="*")
-                .execute()["comments"]
-            )
+                comments_result = (
+                    drive_service.comments()
+                    .list(fileId=document_id, fields="*")
+                    .execute()["comments"]
+                )
 
-            items = [
-                (i["id"], i["content"], i["createdTime"])
-                for i in comments_result
-                if f'@{session["email"]}' in i["content"].lower()
-            ]
+                items = [
+                    (i["id"], i["content"], i["createdTime"])
+                    for i in comments_result
+                    if f'@{session["email"]}' in i["content"].lower()
+                ]
 
-            old = db.users_collection.find_one(
-                {"_id": ObjectId(session["_user_id"])}
-            )["notifications"]
-            for id, content, created_time in items:
-                if id not in old:
-                    old[id] = {
-                        "created": created_time[:-5],
-                        "docname": docname,
-                        "content": content,
-                    }
+                old = db.users_collection.find_one(
+                    {"_id": ObjectId(session["_user_id"])}
+                )["notifications"]
+                for id, content, created_time in items:
+                    if id not in old:
+                        old[id] = {
+                            "created": created_time[:-5],
+                            "docname": docname,
+                            "content": content,
+                        }
 
-            db.users_collection.update_one(
-                {"_id": ObjectId(session["_user_id"])},
-                {"$set": {"notifications": old}},
-            )
+                db.users_collection.update_one(
+                    {"_id": ObjectId(session["_user_id"])},
+                    {"$set": {"notifications": old}},
+                )
 
-            return redirect("/")
+            except Exception as e:
+                print(f"Error fetching comments: {e}")
+                return f"An error occurred: {e}"
 
-        except Exception as e:
-            print(f"Error fetching comments: {e}")
-            return f"An error occurred: {e}"
+        return redirect("/")
 
     return redirect("/")
 
@@ -221,7 +223,7 @@ def get_document_id(credentials):
     if not files:
         return None, None
 
-    return files[0]["id"], files[0]["name"]
+    return [(files[i]["id"], files[i]["name"]) for i in range(len(files))]
 
 
 @app.route("/delete_task", methods=["POST"])
