@@ -194,7 +194,6 @@ def process_comments(comments, user_email, docname):
     user_threads = set()
 
     for comment in comments:
-
         comment_id = comment["id"]
         comment_content = comment["content"]
         created_time = comment["createdTime"]
