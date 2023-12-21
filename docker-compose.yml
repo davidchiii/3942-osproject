@@ -2,10 +2,41 @@ version: '3.1'
 
 services:
   mongo:
-    image: mongo
-    restart: always
+    image: mongo:4.0.8
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: flaskdb
+      MONGODB_DATA_DIR: /data/db
+      MONGODB_LOG_DIR: /dev/null
+    volumes:
+      - /app/data/db
     ports:
       - 27017:27017
+
+  app:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    container_name: app
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=prod
+      - APP_DEBUG=False
+      - APP_KEY=${APP_KEY}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - testing=${testing}
+      - DB_NAME=${DB_NAME}
+      - MONGODB_DATABASE=flaskdb
+      - MONGODB_USERNAME=root
+      - MONGODB_PASSWORD=password
+      - MONGODB_HOSTNAME=mongodb
+    depends_on:
+      - mongo
+    ports:
+      - 5000:5000
