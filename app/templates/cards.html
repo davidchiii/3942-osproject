@@ -69,6 +69,13 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="container">
+                    <form action="/logout" method="get">
+                        <button type="submit" class="btn custom-btn-logout">Logout</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="container">
                     <h1>TO DO:</h1>
                 </div>
             </div>
@@ -110,7 +117,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="container">
-                    <h1>Other notifications</h1>
+                    <h1>20 NEWEST NOTIFICATIONS</h1>
                 </div>
             </div>
             <div class="card">
@@ -126,7 +133,7 @@
                 <div class="project-card">
                   <h2>Document: {{notification.docname}}</h2>
                   <p class="title">{{notification.created}}</p>
-                  <p>{{notification.content}}</p>
+                  <p>From: {{notification.author}} {{notification.content}}</p>
                   <form action="/add_task" method="post" id="tasklist">
                     <select name="task_list_id" form="tasklist">
                         {% for task_list in tasks %}
@@ -140,13 +147,6 @@
               {% endfor %}
             </div>
           {% endfor %}
-        </div>
-        <div class="card">
-            <div class="container">
-                <form action="/logout" method="get">
-                    <button type="submit" class="btn custom-btn-logout">Logout</button>
-                </form>
-            </div>
         </div>
     </div>
 
