@@ -15,7 +15,7 @@ This is an application to collect all of a user's tasks from Google and display 
 ### Requirements
 - Please install the 'requirements.txt' file (see Installation instructions below)
 - Create a .env file containing APP_KEY, CIENT_ID, CLIENT_SECRET, testing (set it to true), DB_NAME (set it to anything you want)
-- The project is provided with a `docker-compose.yml` file to build and run. Please install docker to skip the `requirements.txt` installation step
+- The project is provided with a `docker-compose.yml` file to build and run. Please install docker to skip the `requirements.txt` installation step. If docker-compose does not work, use `mongod` in a different shell.
 
 ### Installation
 1. **Clone the repository**
@@ -46,7 +46,7 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
    pip install -r requirements.txt
    ```
-6. **Run the MongoDB database**
+6. **Run the MongoDB database**. If this doesn't work, set up mongod in another shell.
    ```
    docker compose up -d 
    ```

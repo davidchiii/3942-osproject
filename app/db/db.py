@@ -13,8 +13,8 @@ def connect_db(testing=False):
         if os.environ.get("testing") == "false":
             password = os.environ.get("MONGODB_PASSWORD")
             username = os.environ.get("MONGODB_USERNAME")
-            mongo_host = os.environ.get('MONGODB_HOSTNAME')
-            mongo_db = os.environ.get('MONGODB_DATABASE')
+            mongo_host = os.environ.get("MONGODB_HOSTNAME")
+            mongo_db = os.environ.get("MONGODB_DATABASE")
             if not password:
                 raise ValueError("set M_PASS and M_USER")
             url = f"mongodb://{username}:{password}@{mongo_host}:27017/{mongo_db}"
