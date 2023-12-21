@@ -131,6 +131,9 @@ def authorize():
     session["_user_id"] = str(
         db.users_collection.find_one({"email": session["email"]})["_id"]
     )
+    session["userdisplayname"] = str(
+        db.users_collection.find_one({"email": session["email"]})["name"]
+    )
 
     return redirect("/")
 
@@ -160,6 +163,7 @@ def fetch_comments():
         db.connect_db()
         credentials = get_credentials()
         doclist = get_document_id(credentials)
+        total_items = []
         for item in doclist:
             document_id, docname = item
             print(docname)
@@ -175,64 +179,107 @@ def fetch_comments():
                 )
 
                 items = process_comments(
-                    comments_result, session["email"], docname
+                    comments_result,
+                    session["email"],
+                    session["userdisplayname"],
+                    docname,
                 )
 
-                update_database_with_comments(items, session["_user_id"])
+                total_items.extend(items)
 
             except Exception as e:
                 print(f"Error fetching comments: {e}")
                 return f"An error occurred: {e}"
 
+        update_database_with_comments(total_items, session["_user_id"])
         return redirect("/")
 
     return redirect("/")
 
 
-def process_comments(comments, user_email, docname):
+def process_comments(comments, user_email, user_displayname, docname):
     items = []
 
     for comment in comments:
         comment_id = comment["id"]
         comment_content = comment["content"]
         created_time = comment["createdTime"]
-        author_email = comment.get("author", {}).get("emailAddress", "")
+        author_displayname = comment.get("author", {}).get("displayName", "")
         made_by_user = False
         if user_email in comment_content.lower():
             items.append(
-                create_comment_dict(
-                    comment_id, created_time, docname, comment_content, comment
+                (
+                    created_time,
+                    comment_id,
+                    create_comment_dict(
+                        comment_id,
+                        created_time,
+                        docname,
+                        comment_content,
+                        comment,
+                    ),
                 )
             )
 
-        if author_email.lower() == user_email.lower():
+        if author_displayname.lower() == user_displayname.lower():
             made_by_user = True
 
         for reply in comment.get("replies", []):
+            # someone responded to you and you haven't responded back
+            print()
             if (
-                reply.get("author", {}).get("emailAddress", "").lower()
-                != user_email.lower()
+                reply.get("author", {}).get("displayName", "bad")
+                != user_displayname
                 and made_by_user
+                and not reply.get("replies", [])
             ):
+                print("HERE", reply)
                 items.append(
-                    create_comment_dict(
-                        comment_id,
+                    (
                         reply.get("createdTime", ""),
-                        docname,
-                        reply.get("content", ""),
-                        reply,
+                        comment_id,
+                        create_comment_dict(
+                            comment_id,
+                            reply.get("createdTime", ""),
+                            docname,
+                            reply.get("content", ""),
+                            reply,
+                        ),
                     )
                 )
+            # you got tagged
             elif user_email in reply.get("content", "").lower():
                 items.append(
-                    create_comment_dict(
-                        comment_id,
+                    (
                         reply.get("createdTime", ""),
-                        docname,
-                        reply.get("content", ""),
-                        reply,
+                        comment_id,
+                        create_comment_dict(
+                            comment_id,
+                            reply.get("createdTime", ""),
+                            docname,
+                            reply.get("content", ""),
+                            reply,
+                        ),
                     )
                 )
+            # you are waiting for response
+            elif reply.get("author", {}).get(
+                "displayName", ""
+            ).lower() == user_displayname and not reply.get("replies", []):
+                items.append(
+                    (
+                        reply.get("createdTime", ""),
+                        comment_id,
+                        create_comment_dict(
+                            comment_id,
+                            reply.get("createdTime", ""),
+                            docname,
+                            reply.get("content", ""),
+                            reply,
+                        ),
+                    )
+                )
+
     return items
 
 
@@ -247,18 +294,17 @@ def create_comment_dict(
         "author": comment_data.get("author", {}).get(
             "displayName", "Unknown Author"
         ),
-        "link": comment_data.get("htmlLink", "#"),
     }
 
 
 def update_database_with_comments(items, user_id):
-    old = db.users_collection.find_one({"_id": ObjectId(user_id)})[
-        "notifications"
-    ]
-    for item in items:
+    items.sort(reverse=True)
+
+    old = {}
+    for _, _, item in items[:20]:
         comment_id = item["id"]
         old[comment_id] = item
-
+    print(old)
     db.users_collection.update_one(
         {"_id": ObjectId(user_id)},
         {"$set": {"notifications": old}},
