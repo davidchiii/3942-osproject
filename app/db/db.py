@@ -29,7 +29,7 @@ def connect_db(testing=False):
         else:
             print("Connecting to Mongo locally.")
             password = "password"
-            username = "flaskuser"
+            username = "root"
             client = pm.MongoClient(
                 f"mongodb://{username}:{password}@mongodb:27017/flaskdb"
             )

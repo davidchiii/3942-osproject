@@ -46,7 +46,7 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
    pip install -r requirements.txt
    ```
-6. **Run the MongoDB database**. If this doesn't work, set up mongod in another shell.
+6. **Run the MongoDB database**. 
    ```
    docker compose up -d 
    ```
@@ -54,10 +54,17 @@ This is an application to collect all of a user's tasks from Google and display 
    ```
    export PYTHONPATH=$(pwd)/app
    ```
-7. **Run the app**
+8. **Run the app**
    ```
    flask run
    ```
+
+### Deploy with docker compose
+1. **Run docker compose in /**
+   ```
+   docker compose up -d
+   ```
+
 
 ### Usage
 1. After running the app, open the Flask site on your web browswer. Press the login button and log in using a valid Google account
