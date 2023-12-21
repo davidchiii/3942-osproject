@@ -2,7 +2,7 @@ import os
 import pymongo as pm
 
 client = "unset"
-db_name = "default"
+db_name = os.environ.get("DB_NAME", "default")
 db = None
 users_collection = None
 
@@ -32,5 +32,7 @@ def connect_db(testing=False):
             username = "root"
             client = pm.MongoClient()
             # if not testing:
+            if db_name is None:
+                db_name = "default"
             db = client[db_name]
             users_collection = db.users
