@@ -21,6 +21,7 @@ def connect_db(testing=False):
             # url = url + "/?retryWrites=true&w=majority"
             client = pm.MongoClient(url)
             db = client[db_name]
+
             users_collection = db.users
             try:
                 print(users_collection)
@@ -32,5 +33,7 @@ def connect_db(testing=False):
             username = "root"
             client = pm.MongoClient()
             # if not testing:
-            #     db = client[db_name]
-            #     users_collection = db.users
+            if db_name is None:
+                db_name = "default"
+            db = client[db_name]
+            users_collection = db.users

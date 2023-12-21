@@ -1,9 +1,8 @@
 import unittest
-from .. import app  # Import your Flask app
+from .. import app
 
 
 class FlaskTestCase(unittest.TestCase):
-    # Set up before each test
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
@@ -13,7 +12,6 @@ class FlaskTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/", response.headers["Location"])
 
-    # Tear down after each test
     def tearDown(self):
         pass
 
