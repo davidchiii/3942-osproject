@@ -127,6 +127,15 @@
                   <h2>Document: {{notification.docname}}</h2>
                   <p class="title">{{notification.created}}</p>
                   <p>{{notification.content}}</p>
+                  <form action="/add_task" method="post" id="tasklist">
+                    <select name="task_list_id" form="tasklist">
+                        {% for task_list in tasks %}
+                            <option value="{{tasks[task_list]['id']}}">{{ task_list }}</option>
+                        {% endfor %}
+                      </select>
+                    <input type="hidden" name="task_title" value="Document: {{notification.docname}}, {{notification.content}}">
+                    <button type="submit" class="btn custom-btn-color">Add to tasklist</button>
+                </form>
                 </div>
               {% endfor %}
             </div>
