@@ -1,4 +1,4 @@
-from app.__init__ import process_comments
+from __init__ import process_comments
 
 
 def test_process_comments():
