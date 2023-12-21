@@ -174,27 +174,11 @@ def fetch_comments():
                     .execute()["comments"]
                 )
 
-                items = [
-                    (i["id"], i["content"], i["createdTime"])
-                    for i in comments_result
-                    if f'@{session["email"]}' in i["content"].lower()
-                ]
-
-                old = db.users_collection.find_one(
-                    {"_id": ObjectId(session["_user_id"])}
-                )["notifications"]
-                for id, content, created_time in items:
-                    if id not in old:
-                        old[id] = {
-                            "created": created_time[:-5],
-                            "docname": docname,
-                            "content": content,
-                        }
-
-                db.users_collection.update_one(
-                    {"_id": ObjectId(session["_user_id"])},
-                    {"$set": {"notifications": old}},
+                items = process_comments(
+                    comments_result, session["email"], docname
                 )
+
+                update_database_with_comments(items, session["_user_id"])
 
             except Exception as e:
                 print(f"Error fetching comments: {e}")
@@ -203,6 +187,82 @@ def fetch_comments():
         return redirect("/")
 
     return redirect("/")
+
+
+def process_comments(comments, user_email, docname):
+    items = []
+
+    for comment in comments:
+        comment_id = comment["id"]
+        comment_content = comment["content"]
+        created_time = comment["createdTime"]
+        author_email = comment.get("author", {}).get("emailAddress", "")
+        made_by_user = False
+        if user_email in comment_content.lower():
+            items.append(
+                create_comment_dict(
+                    comment_id, created_time, docname, comment_content, comment
+                )
+            )
+
+        if author_email.lower() == user_email.lower():
+            made_by_user = True
+
+        for reply in comment.get("replies", []):
+            if (
+                reply.get("author", {}).get("emailAddress", "").lower()
+                != user_email.lower()
+                and made_by_user
+            ):
+                items.append(
+                    create_comment_dict(
+                        comment_id,
+                        reply.get("createdTime", ""),
+                        docname,
+                        reply.get("content", ""),
+                        reply,
+                    )
+                )
+            elif user_email in reply.get("content", "").lower():
+                items.append(
+                    create_comment_dict(
+                        comment_id,
+                        reply.get("createdTime", ""),
+                        docname,
+                        reply.get("content", ""),
+                        reply,
+                    )
+                )
+    return items
+
+
+def create_comment_dict(
+    comment_id, created_time, docname, comment_content, comment_data
+):
+    return {
+        "id": comment_id,
+        "created": created_time[:-5],
+        "docname": docname,
+        "content": comment_content,
+        "author": comment_data.get("author", {}).get(
+            "displayName", "Unknown Author"
+        ),
+        "link": comment_data.get("htmlLink", "#"),
+    }
+
+
+def update_database_with_comments(items, user_id):
+    old = db.users_collection.find_one({"_id": ObjectId(user_id)})[
+        "notifications"
+    ]
+    for item in items:
+        comment_id = item["id"]
+        old[comment_id] = item
+
+    db.users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"notifications": old}},
+    )
 
 
 def get_document_id(credentials):
@@ -232,7 +292,6 @@ def delete_task():
         return redirect(url_for("login"))
 
     try:
-        # Extract task list ID and task ID from the request
         task_list_id = request.form.get("task_list_id")
         task_id = request.form.get("task_id")
 
